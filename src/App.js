@@ -270,26 +270,23 @@ const RevanthRecreationsWebsite = () => {
 
       {/* Modal Video Popup */}
       {selectedVideo && (
-  <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex justify-center items-end min-h-screen px-4 py-12">
-    <div className="flex justify-center items-center min-h-screen px-4 py-8">
-      <div className="relative w-full max-w-2xl aspect-video bg-black rounded-xl overflow-hidden shadow-2xl">
-        {/* Close Button */}
-        <button
-          className="absolute top-2 right-2 z-10 text-white bg-white/10 hover:bg-white/20 rounded-full p-2"
-          onClick={() => setSelectedVideo(null)}
-        >
-          <X className="w-6 h-6" />
-        </button>
+  <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex justify-center items-center px-4 py-12">
+    <div className="relative w-full max-h-[90vh] max-w-4xl bg-black rounded-xl overflow-hidden shadow-2xl">
+      {/* Close Button */}
+      <button
+        className="absolute top-2 right-2 z-10 text-white bg-white/10 hover:bg-white/20 rounded-full p-2"
+        onClick={() => setSelectedVideo(null)}
+      >
+        <X className="w-6 h-6" />
+      </button>
 
-        {/* Responsive Video */}
-        <div className="w-full aspect-video">
-            <video
-              src={selectedVideo}
-              controls
-              className="w-full h-full object-cover rounded-lg"
-            />
-        </div>
-      </div>
+      {/* Responsive Video */}
+      <video
+        src={selectedVideo}
+        controls
+        className="w-full h-full object-contain"
+        style={{ maxHeight: '90vh' }}
+      />
     </div>
   </div>
   )}
