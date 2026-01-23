@@ -220,7 +220,9 @@ const RevanthRecreationsWebsite = () => {
 
   const VideosSection = () => {
   const [selectedVideo, setSelectedVideo] = useState(null);
-  const [showAllVideos, setShowAllVideos] = useState(false);
+  const [expandedFolder, setExpandedFolder] = useState(null);
+
+  const folders = Object.keys(videoProjects);
 
   return (
     <section id="videos" className="py-20 bg-gradient-to-br from-gray-900 to-black text-white">
@@ -235,38 +237,45 @@ const RevanthRecreationsWebsite = () => {
           </p>
         </div>
 
-        {/* Video Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {(showAllVideos ? videoProjects : videoProjects.slice(0, 6)).map((project, index) => (
-            <div
-              key={index}
-              onClick={() => setSelectedVideo(project.url)}
-              className="video-card group cursor-pointer rounded-lg overflow-hidden bg-white/5 shadow-md transition duration-300 hover:bg-white/10"
-            >
+        {/* Folders */}
+        <div className="space-y-6">
+          {folders.map((folder, folderIndex) => (
+            <div key={folderIndex} className="bg-white/5 rounded-lg overflow-hidden">
+              {/* Folder Header */}
+              <button
+                onClick={() => setExpandedFolder(expandedFolder === folder ? null : folder)}
+                className="w-full flex items-center justify-between p-6 hover:bg-white/10 transition-colors duration-300"
+              >
+                <h3 className="text-2xl font-semibold text-purple-400">{folder}</h3>
+                <span className="text-2xl text-pink-400">{expandedFolder === folder ? '−' : '+'}</span>
+              </button>
 
-              <div className="aspect-video bg-black flex items-center justify-center">
-                <Play className="w-16 h-16 text-white/80 group-hover:text-white transition duration-300" />
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
-                <p className="text-gray-300 text-sm">{project.description}</p>
-              </div>
+              {/* Videos in Folder */}
+              {expandedFolder === folder && (
+                <div className="border-t border-white/10 p-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {videoProjects[folder].map((project, index) => (
+                      <div
+                        key={index}
+                        onClick={() => setSelectedVideo(project.url)}
+                        className="video-card group cursor-pointer rounded-lg overflow-hidden bg-white/5 shadow-md transition duration-300 hover:bg-white/10"
+                      >
+                        <div className="aspect-video bg-black flex items-center justify-center relative overflow-hidden">
+                          <img src="/logo.png" alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-300" />
+                          <Play className="w-16 h-16 text-white absolute group-hover:text-white/80 transition duration-300" />
+                        </div>
+                        <div className="p-6">
+                          <h4 className="text-lg font-semibold mb-2">{project.title}</h4>
+                          <p className="text-gray-300 text-sm">{project.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
-
-        {/* View All Button */}
-        {!showAllVideos && (
-          <div className="text-center mt-12">
-            <button
-              onClick={() => setShowAllVideos(true)}
-              className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
-            >
-              View All Videos
-            </button>
-          </div>
-        ) }
-        
 
       {/* Modal Video Popup */}
       {selectedVideo && (
