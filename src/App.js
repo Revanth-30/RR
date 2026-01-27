@@ -221,8 +221,24 @@ const RevanthRecreationsWebsite = () => {
   const VideosSection = () => {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [expandedFolder, setExpandedFolder] = useState(null);
+  const [searchQueries, setSearchQueries] = useState({});
 
   const folders = Object.keys(videoProjects);
+
+  const handleSearch = (folder, query) => {
+    setSearchQueries({
+      ...searchQueries,
+      [folder]: query
+    });
+  };
+
+  const filterVideos = (folder) => {
+    const query = searchQueries[folder] || '';
+    return videoProjects[folder].filter(video =>
+      video.title.toLowerCase().includes(query.toLowerCase()) ||
+      video.description.toLowerCase().includes(query.toLowerCase())
+    );
+  };
 
   return (
     <section id="videos" className="py-20 bg-gradient-to-br from-gray-900 to-black text-white">
@@ -242,34 +258,55 @@ const RevanthRecreationsWebsite = () => {
           {folders.map((folder, folderIndex) => (
             <div key={folderIndex} className="bg-white/5 rounded-lg overflow-hidden">
               {/* Folder Header */}
-              <button
-                onClick={() => setExpandedFolder(expandedFolder === folder ? null : folder)}
-                className="w-full flex items-center justify-between p-6 hover:bg-white/10 transition-colors duration-300"
-              >
-                <h3 className="text-2xl font-semibold text-purple-400">{folder}</h3>
-                <span className="text-2xl text-pink-400">{expandedFolder === folder ? '−' : '+'}</span>
-              </button>
+              <div className="w-full flex items-center justify-between p-6 hover:bg-white/10 transition-colors duration-300">
+                <button
+                  onClick={() => setExpandedFolder(expandedFolder === folder ? null : folder)}
+                  className="flex items-center gap-4 flex-1"
+                >
+                  <h3 className="text-2xl font-semibold text-purple-400">{folder}</h3>
+                  <span className="text-2xl text-pink-400">{expandedFolder === folder ? '−' : '+'}</span>
+                </button>
+                
+                {/* Search Bar at Right */}
+                {expandedFolder === folder && (
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchQueries[folder] || ''}
+                    onChange={(e) => handleSearch(folder, e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-48 px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:bg-white/15 transition-all duration-300 text-sm"
+                  />
+                )}
+              </div>
 
               {/* Videos in Folder */}
               {expandedFolder === folder && (
                 <div className="border-t border-white/10 p-8">
+                  {/* Videos Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {videoProjects[folder].map((project, index) => (
-                      <div
-                        key={index}
-                        onClick={() => setSelectedVideo(project.url)}
-                        className="video-card group cursor-pointer rounded-lg overflow-hidden bg-white/5 shadow-md transition duration-300 hover:bg-white/10"
-                      >
-                        <div className="aspect-video bg-black flex items-center justify-center relative overflow-hidden">
-                          <img src="/logo.png" alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-300" />
-                          <Play className="w-16 h-16 text-white absolute group-hover:text-white/80 transition duration-300" />
+                    {filterVideos(folder).length > 0 ? (
+                      filterVideos(folder).map((project, index) => (
+                        <div
+                          key={index}
+                          onClick={() => setSelectedVideo(project.url)}
+                          className="video-card group cursor-pointer rounded-lg overflow-hidden bg-white/5 shadow-md transition duration-300 hover:bg-white/10"
+                        >
+                          <div className="aspect-video bg-black flex items-center justify-center relative overflow-hidden">
+                            <img src="/logo.png" alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-300" />
+                            <Play className="w-16 h-16 text-white absolute group-hover:text-white/80 transition duration-300" />
+                          </div>
+                          <div className="p-6">
+                            <h4 className="text-lg font-semibold mb-2">{project.title}</h4>
+                            <p className="text-gray-300 text-sm">{project.description}</p>
+                          </div>
                         </div>
-                        <div className="p-6">
-                          <h4 className="text-lg font-semibold mb-2">{project.title}</h4>
-                          <p className="text-gray-300 text-sm">{project.description}</p>
-                        </div>
+                      ))
+                    ) : (
+                      <div className="col-span-full text-center py-8">
+                        <p className="text-gray-400">No videos found matching your search.</p>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
               )}
